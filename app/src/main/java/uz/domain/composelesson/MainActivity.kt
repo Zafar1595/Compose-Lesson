@@ -1,12 +1,8 @@
 package uz.domain.composelesson
 
 import android.os.Bundle
-import android.text.Layout
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,7 +16,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -28,11 +23,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -59,7 +52,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun App() {
-    ComposeLessonTheme {
+    ComposeLessonTheme(darkTheme = false) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
@@ -131,16 +124,23 @@ fun BottomNavigationBar(navController: NavController, bottomBarState: MutableSta
             BottomNavItem.Profile
         )
         items.forEach { item ->
+            val selected = currentRoute == item.route
             BottomNavigationItem(
-                selected = currentRoute == item.route,
+                selected = selected,
                 onClick = {
                     navController.navigate(item.route) {
                         popUpTo(navController.graph.startDestinationId)
                         launchSingleTop = true
                     }
                 },
-                icon = { Icon(painterResource(id = item.icon), contentDescription = null) },
-                label = { Text(item.label) }
+                icon = {
+                    Icon(
+                        painterResource(id = item.icon),
+                        contentDescription = item.label,
+                        tint = if(selected) Color.White else Color.Black
+                    )
+                },
+                label = { Text(item.label, color = if(selected) Color.White else Color.Black) }
             )
         }
     }
@@ -153,12 +153,27 @@ enum class Screen(val route: String) {
 
 }
 
-sealed class BottomNavItem(val route: String, val icon: Int, val label: String) {
+sealed class BottomNavItem(
+    val route: String,
+    val icon: Int,
+    val icon_selected: Int,
+    val label: String
+) {
     data object Home :
-        BottomNavItem(Screen.PersonsListScreen.route, R.drawable.baseline_add_home_24, "Home")
+        BottomNavItem(
+            Screen.PersonsListScreen.route,
+            R.drawable.baseline_add_home_24,
+            R.drawable.baseline_add_home_24_selected,
+            "Home"
+        )
 
     data object Profile :
-        BottomNavItem(Screen.ProfileScreen.route, R.drawable.baseline_adb_24, "Profile")
+        BottomNavItem(
+            Screen.ProfileScreen.route,
+            R.drawable.baseline_adb_24,
+            R.drawable.baseline_adb_24_selected,
+            "Profile"
+        )
 }
 
 @Preview(showBackground = true)

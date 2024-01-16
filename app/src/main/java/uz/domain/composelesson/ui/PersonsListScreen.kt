@@ -1,5 +1,6 @@
 package uz.domain.composelesson.ui
 
+import android.annotation.SuppressLint
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -30,6 +31,7 @@ import uz.domain.composelesson.Screen
 
 @Composable
 fun PersonsListScreen(navController: NavHostController, viewModel: MainViewModel) {
+
     val data = viewModel.getItems()
 
         Column(modifier = Modifier
